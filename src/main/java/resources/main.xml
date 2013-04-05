@@ -1,0 +1,10 @@
+<frame size="640,280" title="Hello SWIXML World" defaultCloseOperation="JFrame.EXIT_ON_CLOSE">
+<panel constraints="BorderLayout.CENTER">
+<label labelfor="mp3catalogField" font="Georgia-BOLD-12" foreground="blue" text="download to:"/>
+<textfield id="mp3catalogField" columns="20" Text="Swixml"/>
+<label labelfor="mp3catalogField" font="Georgia-BOLD-12" foreground="blue" text="read from:"/>
+<textfield id="filePathField" columns="20" Text="Swixml"/>
+<progressbar id="mProgressBar"/>
+<button text="Download all"  action="submit"/>
+</panel>
+</frame>
