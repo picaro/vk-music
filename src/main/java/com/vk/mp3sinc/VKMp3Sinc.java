@@ -174,7 +174,7 @@ public final class VKMp3Sinc extends JPanel implements ActionListener {
 	private void setUpFrames(VKMp3Sinc vkMp3Sinc) {
 
 		try {
-			new SwingEngine(this).render("resources/main.xml").setVisible(true);
+			new SwingEngine(this).render("main.xml").setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -193,14 +193,15 @@ public final class VKMp3Sinc extends JPanel implements ActionListener {
 		// get page
 		Calendar dModified = null;
 
-		while (true) {
+	//	while (true) {
 			File fmp3 = new File(filepath);
 			Calendar newDModified = Calendar.getInstance();
 			newDModified.setTimeInMillis(fmp3.lastModified());
 			File fdest = new File(sincdir);
 			System.out.println("--" + (dModified != null && dModified.before(newDModified)) + " fdest.exists()" + fdest.exists());
-				
-			if (dModified == null || dModified.before(newDModified) && fdest.exists()) {
+
+            System.out.println("dm:" + dModified);
+            if (fdest.exists()) {
 				System.out.println("start sync>>");
 				dModified = newDModified;
 				String mp3page = VKNetwork.getVKMP3PageByFile(filepath);
@@ -215,7 +216,7 @@ public final class VKMp3Sinc extends JPanel implements ActionListener {
 				e.printStackTrace();
 			}
 
-		}
+	//	}
 	}
 
 	/**

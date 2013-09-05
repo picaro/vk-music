@@ -1,16 +1,7 @@
 package com.vk.mp3sinc;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.URISyntaxException;
+import java.io.*;
+import java.net.*;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -22,6 +13,8 @@ import org.apache.commons.httpclient.util.URIUtil;
 import com.zenkey.net.prowser.Prowser;
 import com.zenkey.net.prowser.Request;
 import com.zenkey.net.prowser.Tab;
+import org.jsoup.Jsoup;
+import org.jsoup.parser.Parser;
 
 public class VKNetwork extends Thread  implements IVKNetwork  {
 
@@ -75,6 +68,8 @@ public class VKNetwork extends Thread  implements IVKNetwork  {
 		//vkMp3Sinc.getmProgressBar().setValue(0);
 		
 		Map<String, File> localDir = new Hashtable<String, File>();
+
+        if (flist != null)
 		for (int i = 0; i<flist.length ; i++){
 			File mfile = flist[i];
 			localDir.put(mfile.getName(), mfile);
@@ -165,21 +160,42 @@ public class VKNetwork extends Thread  implements IVKNetwork  {
 
 	public void download(String inputURL, String sincdir) {
 			try {
-				Prowser prowser = new Prowser();
-			    Tab tab = prowser.createTab();
-			    Request request =
-			        new Request(inputURL);
-			    byte[] html = tab.go(request).getPageBytes();
-			    if (html == null || html.length < 1000) {
-			    	System.out.println("something wrong!");
-			    	return;
-			    }
-			    OutputStream out = new FileOutputStream(sincdir);
-			    out.write(html);
+                System.setProperty("http.proxyHost", "192.168.32.7");
+                System.setProperty("http.proxyPort", "3128");
+
+//				Prowser prowser = new Prowser();
+//                Tab tab = prowser.createTab();
+//			    Request request =
+//			        new Request(inputURL);
+//			    byte[] html = tab.go(request).getPageBytes();
+//			    if (html == null || html.length < 1000) {
+//			    	System.out.println("something wrong!");
+//			    	return;
+//			    }
+
+                Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.32.7", 3128)); // set proxy server and port
+                URL url = new URL(inputURL);
+                HttpURLConnection uc = (HttpURLConnection)url.openConnection(proxy);
+
+                uc.connect();
+
+                System.out.println("b1");
+                StringBuffer tmp = new StringBuffer();
+                int read = 0;
+                byte[] bytes = new byte[1024];
+                InputStream in = uc.getInputStream();
+                OutputStream out = new FileOutputStream(sincdir);
+                while ((read = in.read(bytes)) != -1) {
+                    out.write(bytes, 0, read);
+                }
+                System.out.println("b2");
+
+
+         //    out.write(tmp.toString().getBytes());
 			    out.close();
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
+                System.out.println("b3");
+
+            }
 			catch (URIException e) {
 				e.printStackTrace();
 			} catch (FileNotFoundException e) {

@@ -94,16 +94,18 @@
 			<version>1.2.16</version>
 		</dependency>
 
-<dependency>
-    <groupId>com.zenkey.net.prowser</groupId>
-    <artifactId>prowser</artifactId>
-    <version>0.2.0</version>
-</dependency>
-<dependency>
-    <groupId>org.swixml</groupId>
-    <artifactId>swixml</artifactId>
-    <version>0.2.0</version>
-</dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
 
 
 	</dependencies>

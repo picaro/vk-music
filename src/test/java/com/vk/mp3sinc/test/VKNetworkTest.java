@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.vk.mp3sinc.VKNetwork;
@@ -38,6 +39,7 @@ public class VKNetworkTest {
 	/**
 	 * Test method for {@link com.vk.mp3sinc.VKNetwork#getVKMP3Page()}.
 	 */
+
 	@Test
 	public void testGetVKMP3Page() {
 		String page = vkNetwork.getVKMP3PageByFile("d:/page.html");
@@ -47,6 +49,7 @@ public class VKNetworkTest {
 	/**
 	 * Test method for {@link com.vk.mp3sinc.VKNetwork#download(java.lang.String, java.lang.String)}.
 	 */
+    @Ignore
 	@Test
 	public void testDownload() {
 		String inputURL = 
