@@ -40,6 +40,7 @@ public class VKNetworkTest {
 	 * Test method for {@link com.vk.mp3sinc.VKNetwork#getVKMP3Page()}.
 	 */
 
+    @Ignore
 	@Test
 	public void testGetVKMP3Page() {
 		String page = vkNetwork.getVKMP3PageByFile("d:/page.html");

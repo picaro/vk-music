@@ -10,32 +10,27 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.basedir>c:/projectsGit/my/vk-mp3-sinc/vk-mp3-sinc/</project.basedir>
  	</properties>
 
-	<repositories>
-		<repository>
-			<id>java.net</id>
-			<url>https://maven.java.net/content/repositories/public/</url>
-		</repository>
-		<repository>
-			<id>google-swixml2</id>
-			<url>http://swixml2.googlecode.com/svn/mavenrepo</url>
-		</repository>
-		<repository>
-		  <id>ProjectRepo</id>
-		  <name>ProjectRepo</name>
-		  <url>file://${project.basedir}/lib</url>
-		</repository>
-	</repositories>
+    <repositories>
+        <repository>
+            <id>java.net</id>
+            <url>https://maven.java.net/content/repositories/public/</url>
+        </repository>
+        <repository>
+            <id>google-swixml2</id>
+            <url>http://swixml2.googlecode.com/svn/mavenrepo</url>
+        </repository>
+    </repositories>
 
 
-	<dependencies>
-		<dependency>
+    <dependencies>
+
+	<dependency>
 	<groupId>jdom</groupId>
 	<artifactId>jdom</artifactId>
 	<version>1.1</version>
-</dependency>
+    </dependency>
             
 		<dependency>
 			<groupId>junit</groupId>
@@ -106,17 +101,17 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>net.sf.ingenias</groupId>
+            <artifactId>swixml</artifactId>
+            <version>1.0</version>
+        </dependency>
 
 
-	</dependencies>
+    </dependencies>
 	
 	<build>
 	
-	   <resources>
-     <resource>
-       <directory>${project.basedir}/src/main/java/resources</directory>
-     </resource>
-   </resources>
 	
 	
   <plugins>
