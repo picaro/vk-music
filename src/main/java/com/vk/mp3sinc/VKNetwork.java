@@ -114,7 +114,11 @@ public class VKNetwork extends Thread implements IVKNetwork {
             System.out.println(">>" + key);
 
             String urlenc = null;
-            urlenc = URLEncoder.encode(mp3s.get(key));
+          //  try {
+                urlenc = mp3s.get(key);
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//            }
 
             key = VkMp3Parser.sanitizeFilename(key);
 
@@ -162,6 +166,8 @@ public class VKNetwork extends Thread implements IVKNetwork {
 //			    }
 
             Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.32.7", 3128)); // set proxy server and port
+            System.out.println("b1" + inputURL);
+
             URL url = new URL(inputURL);
             HttpURLConnection uc = (HttpURLConnection) url.openConnection(proxy);
 
