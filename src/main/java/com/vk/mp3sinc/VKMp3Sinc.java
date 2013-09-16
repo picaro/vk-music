@@ -1,6 +1,7 @@
 package com.vk.mp3sinc;
 
 import org.apache.http.client.ClientProtocolException;
+import org.apache.log4j.Logger;
 import org.ini4j.Ini;
 import org.ini4j.Profile.Section;
 import org.swixml.SwingEngine;
@@ -22,7 +23,11 @@ import java.util.Calendar;
  *
  * @author picaro
  */
-public final class VKMp3Sinc extends JPanel implements ActionListener {
+public final class VKMp3Sinc  extends WindowAdapter implements ActionListener {
+
+    private static final Logger log = Logger.getLogger(VKMp3Sinc.class);
+
+    private SwingEngine swix;
 
     /**
      *
@@ -33,24 +38,9 @@ public final class VKMp3Sinc extends JPanel implements ActionListener {
     public static int counttodownload = 0;
     public static int downloaded = 0;
 
-    public final static String fileSettings = "vkmp3sinc.ini";
 
     private static Ini prefs = null;
 
-    public static String FILE_PATH = "filepath";
-    public static String LOGIN = "login";
-    public static String PASSWORD = "password";
-    public static String SINC_DIR = "sincdir";
-
-    public static String sincdir;
-    public static String password;
-    // public static String login;
-    public static String filepath;
-
-    public final static Dimension hpad10 = new Dimension(10, 1);
-    public final static Dimension vpad20 = new Dimension(1, 20);
-    public final static Dimension vpad7 = new Dimension(1, 7);
-    public final static Dimension vpad4 = new Dimension(1, 4);
 
     JTextField mp3catalogField = new JTextField();
 
@@ -95,7 +85,7 @@ public final class VKMp3Sinc extends JPanel implements ActionListener {
             UIManager.setLookAndFeel(UIManager
                     .getCrossPlatformLookAndFeelClassName());
         } catch (Exception exc) {
-            System.err.println("Error loading L&F: " + exc);
+            log.error("Error loading L&F: " + exc);
         }
 
         // create a radio listener to listen to option changes
@@ -108,51 +98,64 @@ public final class VKMp3Sinc extends JPanel implements ActionListener {
      * @param args
      */
     public static void main(String[] args) {
-        System.out.println("start");
+        log.info("start");
 
         try {
             // String login = "alexanders-mail@rambler.ru";
             // String password = "password";
-            File fil = new File(fileSettings);
+            File fil = new File(Constants.fileSettings);
+             log.info("fp:" + fil.getAbsolutePath());
+            System.out.println("fp2:" + fil.getAbsolutePath());
             if (!fil.exists())
                 fil.createNewFile();
             prefs = new Ini(fil);
             Section prefsec = prefs.get("settings");
-            sincdir = prefsec.get(SINC_DIR);
+            Constants.sincdir = prefsec.get(Constants.SINC_DIR);
             // login = prefsec.get(LOGIN);
-            password = prefsec.get(PASSWORD);
-            filepath = prefsec.get(FILE_PATH);
+            Constants.password = prefsec.get(Constants.PASSWORD);
+            Constants.filepath = prefsec.get(Constants.FILE_PATH);
+            String uproxystr = prefsec.get("useproxy");
+            if (uproxystr != null && uproxystr.equalsIgnoreCase("true")){
+                Constants.useproxy = true;
+                Constants.proxyPort = Integer.parseInt(prefsec.get("proxyport"));
+                Constants.proxyUrl = prefsec.get("proxyurl");
+            } else {
+                Constants.useproxy = false;
+            }
 
             VKMp3Sinc vkMp3Sinc = new VKMp3Sinc();
             vkMp3Sinc.setUpFrames(vkMp3Sinc);
 
         } catch (Throwable t) {
-            System.out.println("uncaught exception: " + t);
+            log.error("uncaught exception: " + t);
             t.printStackTrace();
         }
 
-        // vkMp3Sinc.sinchronize(login, password, sincdir);
+        // vkMp3Sinc.synchronizeMp3s(login, password, sincdir);
 
         // GUI ???
     }
 
     private void setUpFrames(VKMp3Sinc vkMp3Sinc) {
-
         try {
-            new SwingEngine(this).render("main.xml").setVisible(true);
+            swix = new SwingEngine(this);
+            Container container = swix.render("main.xml");
+           container.setVisible(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        mp3catalogField.setText(sincdir);
-        filePathField.setText(filepath);
+        mp3catalogField = (JTextField) swix.find("mp3catalogField");
+        mp3catalogField.setText(Constants.sincdir);
+        filePathField = (JTextField) swix.find("filePathField");
+        filePathField.setText(Constants.filepath);
         mProgressBar = new JProgressBar();
         mProgressBar.setValue(0);
         mProgressBar.setStringPainted(true);
 
     }
 
-    private void sinchronize(String filepath, String login2, String password,
-                             String sincdir) throws ClientProtocolException, IOException,
+    private void synchronizeMp3s(String filepath, String login2, String password,
+                                 String sincdir) throws ClientProtocolException, IOException,
             URISyntaxException {
         // login - password
         // get page
@@ -189,22 +192,35 @@ public final class VKMp3Sinc extends JPanel implements ActionListener {
      * implementation. A more self-respecting implementation would at least
      * check to see if a save was needed.
      */
-    protected final class AppCloser extends WindowAdapter {
-        public void windowClosing(WindowEvent e) {
-            Section prefsec = prefs.get("settings");
-            if (prefsec == null)
-                prefsec = prefs.add("settings");
-            prefsec.put(FILE_PATH, filePathField.getText());
-            prefsec.put(SINC_DIR, mp3catalogField.getText());
-            File output = new File(fileSettings);
-            try {
-                prefs.store(output);
-            } catch (IOException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-            System.exit(0);
+//    protected final class AppCloser extends WindowAdapter {
+//
+//    }
+
+    public Action actionExit = new AbstractAction() {
+        public void actionPerformed( ActionEvent e ) {
+            JOptionPane.showMessageDialog( swix.getRootComponent(), swix.getLocalizer().getString("mis_Exit"));
+            VKMp3Sinc.this.windowClosing(null);
         }
+    };
+
+
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+        System.out.println("windowClosing 1!");
+        Section prefsec = prefs.get("settings");
+        if (prefsec == null)
+            prefsec = prefs.add("settings");
+        prefsec.put(Constants.FILE_PATH, filePathField.getText());
+        prefsec.put(Constants.SINC_DIR, mp3catalogField.getText());
+        File output = new File(Constants.fileSettings);
+        try {
+            prefs.store(output);
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        System.exit(0);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -237,7 +253,7 @@ public final class VKMp3Sinc extends JPanel implements ActionListener {
 
     public void sinchronizeByFile(String sincFile, String sincDir)
             throws ClientProtocolException, IOException, URISyntaxException {
-        sinchronize(sincFile, null, null, sincDir);
+        synchronizeMp3s(sincFile, null, null, sincDir);
     }
 
     /**

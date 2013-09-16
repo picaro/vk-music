@@ -152,8 +152,8 @@ public class VKNetwork extends Thread implements IVKNetwork {
 
     public void download(String inputURL, String sincdir) {
         try {
-            System.setProperty("http.proxyHost", "192.168.32.7");
-            System.setProperty("http.proxyPort", "3128");
+//            System.setProperty("http.proxyHost", "192.168.32.7");
+//            System.setProperty("http.proxyPort", "3128");
 
 //				Prowser prowser = new Prowser();
 //                Tab tab = prowser.createTab();
@@ -165,11 +165,17 @@ public class VKNetwork extends Thread implements IVKNetwork {
 //			    	return;
 //			    }
 
-            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.32.7", 3128)); // set proxy server and port
             System.out.println("b1" + inputURL);
 
             URL url = new URL(inputURL);
-            HttpURLConnection uc = (HttpURLConnection) url.openConnection(proxy);
+            HttpURLConnection uc = null;
+            if (Constants.useproxy) {
+                Proxy proxy = new Proxy(Proxy.Type.HTTP,
+                        new InetSocketAddress(Constants.proxyUrl, Constants.proxyPort)); // set proxy server and port
+                uc = (HttpURLConnection) url.openConnection(proxy);
+            }   else {
+                uc = (HttpURLConnection) url.openConnection();
+            }
 
             uc.connect();
 
